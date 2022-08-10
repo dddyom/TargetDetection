@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, LinearSegmentedColormap
+from loguru import logger
 from pathlib import Path
 
 import numpy as np
@@ -43,6 +44,7 @@ def save_numpy_array_to_image(arr: np.ndarray,
 
 
 def mkdir_images_from_dat_path(dat_path: Path) -> Exception:
+    logger.info('Convert dat to images...')
     try:
         buffers = list(dat_path.iterdir())
     except FileNotFoundError as e:
@@ -52,7 +54,7 @@ def mkdir_images_from_dat_path(dat_path: Path) -> Exception:
             continue
         buf_arr = convert_dat_to_numpy_array(dat_file_path=dat_path / buf)
         image_path = dat_path / 'images'
-        print(f"Save {buf.name}.jpg to {image_path}")
+        logger.info(f"Save {buf.name}.jpg to {image_path}")
         save_numpy_array_to_image(arr=buf_arr,
                                   title=buf.stem,
                                   image_path=image_path)

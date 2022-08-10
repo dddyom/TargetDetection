@@ -1,4 +1,5 @@
 from configparser import ConfigParser
+from loguru import logger
 from pathlib import Path
 import os
 import sys
@@ -36,12 +37,13 @@ def get_args() -> list[str]:
             key=key,
             value=config['DEFAULT'][key],
         ))
-
+    logger.info('config parsed')
     return args
 
 
 def main() -> None:
     args = get_args()
+    logger.info('start detection')
     os.system('python yolov5/detect.py ' + ' '.join(args))
 
 
