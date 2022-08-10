@@ -32,12 +32,9 @@ def get_cmap() -> LinearSegmentedColormap:
 
 
 def save_numpy_array_to_image(arr: np.ndarray,
-                              title: str,
-                              image_path: Path) -> None:
+                              jpg_fname: Path) -> None:
     cmap = get_cmap()
-    if not os.path.exists(image_path):
-        os.mkdir(image_path)
-    plt.imsave(fname=f'{image_path}/{title}.jpg',
+    plt.imsave(fname=jpg_fname,
                arr=arr,
                cmap=cmap,
                format='jpg')
@@ -49,12 +46,21 @@ def mkdir_images_from_dat_path(dat_path: Path) -> Exception:
         buffers = list(dat_path.iterdir())
     except FileNotFoundError as e:
         return e
+
+    image_path = dat_path / 'images'
+    if not os.path.exists(image_path):
+        os.mkdir(image_path)
+
     for buf in sorted(buffers):
         if not re.search("^SO.*dat$", buf.name):
             continue
+
+        jpg_fname = image_path / (buf.stem + '.jpg')
+        if jpg_fname.exists():
+            continue
+
         buf_arr = convert_dat_to_numpy_array(dat_file_path=dat_path / buf)
-        image_path = dat_path / 'images'
-        logger.info(f"Save {buf.name}.jpg to {image_path}")
+        logger.info(f"Save {buf.stem}.jpg to {image_path}")
         save_numpy_array_to_image(arr=buf_arr,
-                                  title=buf.stem,
-                                  image_path=image_path)
+                                  jpg_fname=jpg_fname,
+                                  )
