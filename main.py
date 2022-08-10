@@ -6,7 +6,7 @@ import sys
 from utils import mkdir_images_from_dat_path
 
 
-def get_args():
+def get_args() -> list[str]:
     args = []
 
     config = ConfigParser()
@@ -40,7 +40,7 @@ def get_args():
     return args
 
 
-def main():
+def main() -> None:
     args = get_args()
     os.system('python yolov5/detect.py ' + ' '.join(args))
 
