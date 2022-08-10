@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, LinearSegmentedColormap
+from pathlib import Path
 
 import numpy as np
 import struct
@@ -38,13 +39,12 @@ def save_numpy_array_to_image(arr, title, path):
 
 def mkdir_images_from_dat_path(dat_path):
     try:
-        buffers = os.listdir(dat_path)
+        buffers = list(dat_path.iterdir())
     except FileNotFoundError as e:
         return e
     for buf in sorted(buffers):
-        if not re.search("^SO.*dat$", buf):
+        if not re.search("^SO.*dat$", buf.name):
             continue
-        buf_arr = convert_dat_to_numpy_array(dat_file_path=f'{dat_path}/{buf}')
-        buf_title = buf.split('.')[0]
-        print(f"Save {buf_title}.dat to jpg")
-        save_numpy_array_to_image(arr=buf_arr, title=buf_title, path=f'{dat_path}/images')
+        buf_arr = convert_dat_to_numpy_array(dat_file_path=dat_path / buf)
+        print(f"Save {buf.name}.dat to jpg")
+        save_numpy_array_to_image(arr=buf_arr, title=buf.stem, path=dat_path / 'images')
