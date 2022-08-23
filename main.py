@@ -4,14 +4,14 @@ from pathlib import Path
 import os
 import sys
 
-from utils import mkdir_images_from_dat_path
+from utils import mkdir_images_from_dat_path, create_summary
+
+config = ConfigParser()
+config.read('config.ini')
 
 
 def get_args() -> list[str]:
     args = []
-
-    config = ConfigParser()
-    config.read('config.ini')
 
     for key in config['DEFAULT']:
 
@@ -45,6 +45,8 @@ def main() -> None:
     args = get_args()
     logger.info('start detection')
     os.system('python yolov5/detect.py ' + ' '.join(args))
+    logger.info('write summary')
+    create_summary(Path(config['DEFAULT']['project']), Path(config['DEFAULT']['name']))
 
 
 if __name__ == '__main__':
