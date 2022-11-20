@@ -19,7 +19,7 @@ def get_args() -> list[str]:
             source_dat = Path(config['DEFAULT'][key])
             err = mkdir_images_from_dat_path(source_dat)
             if err:
-                sys.exit(err)
+                sys.exit(str(err))
             args.append("--{key} {image_path}".format(
                 key=key,
                 image_path=str(source_dat / 'images'),
@@ -46,7 +46,8 @@ def main() -> None:
     logger.info('start detection')
     os.system('python yolov5/detect.py ' + ' '.join(args))
     logger.info('write summary')
-    create_summary(Path(config['DEFAULT']['project']), Path(config['DEFAULT']['name']))
+    create_summary(Path(config['DEFAULT']['project']),
+                   Path(config['DEFAULT']['name']))
 
 
 if __name__ == '__main__':
