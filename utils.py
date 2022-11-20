@@ -8,7 +8,7 @@ from Buffer import Buffer
 from Labels import Labels
 
 
-def mkdir_images_from_dat_path(dat_path: Path) -> Exception:
+def mkdir_images_from_dat_path(dat_path: Path) -> Exception | None:
     logger.info('Convert dat to images...')
     try:
         buffers = list(dat_path.iterdir())
@@ -27,8 +27,7 @@ def mkdir_images_from_dat_path(dat_path: Path) -> Exception:
         if jpg_fname.exists():
             continue
 
-        buf_arr = Buffer(dat_file_path=dat_path / buf)
-        buf_arr.save_jpg(jpg_fname=jpg_fname)
+        Buffer(dat_file_path=dat_path / buf).save_jpg(jpg_fname=jpg_fname)
         logger.info(f"Save {buf.stem}.jpg to {image_path}")
 
 
