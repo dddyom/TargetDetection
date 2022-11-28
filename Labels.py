@@ -2,13 +2,15 @@
 import re
 import json
 from pathlib import Path
+import shutil
 
 
 class Labels:
 
-    def __init__(self, exp_path: Path, fname: str = 'summary') -> None:
+    def __init__(self, exp_path: Path, save_path: Path, fname: str = 'summary') -> None:
         self.fname = fname
         self.path = exp_path
+        self.save_path = save_path
         self.summary_json, self.summary_txt = {}, []
 
         for label in sorted(list((exp_path / 'labels').iterdir())):
@@ -30,8 +32,11 @@ class Labels:
             self.summary_txt.append(txt_line)
             self.summary_json[label.stem] = json_line
 
+    def remove_exp(self):
+        shutil.rmtree(self.path)  # remove dir and all contains
+
     def save_txt(self) -> None:
-        with open(self.path / (self.fname + '.txt'), 'w') as f:
+        with open(self.save_path / (self.fname + '.txt'), 'a') as f:
             for line in self.summary_txt:
                 f.write(f"{line}\n")
 

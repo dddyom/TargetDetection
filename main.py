@@ -1,10 +1,13 @@
 from configparser import ConfigParser
-from loguru import logger
 from pathlib import Path
+import sched
 import os
 import sys
 
-from utils import mkdir_images_from_dat_path, create_summary
+from loguru import logger
+
+from utils import mkdir_images_from_dat_path, \
+    create_summary, move_processed_dat
 
 config = ConfigParser()
 config.read('config.ini')
@@ -26,11 +29,15 @@ def get_args() -> list[str]:
             ))
             continue
 
-        if key in ('save-txt', 'save-conf', 'save-crop', 'hide-labels', 'hide-conf'):
+        if key in ('save-txt', 'save-conf',
+                   'save-crop', 'hide-labels', 'hide-conf'):
             if config['DEFAULT'].getboolean(key):
                 args.append('--{key}'.format(
                     key=key,
                 ))
+            continue
+
+        if key in ('timer_sec', 'iter_count'):
             continue
 
         args.append("--{key} {value}".format(
@@ -42,13 +49,30 @@ def get_args() -> list[str]:
 
 
 def main() -> None:
+    print('MAIN')
     args = get_args()
     logger.info('start detection')
     os.system('python yolov5/detect.py ' + ' '.join(args))
     logger.info('write summary')
-    create_summary(Path(config['DEFAULT']['project']),
-                   Path(config['DEFAULT']['name']))
+    create_summary(
+        project_path=Path(config['DEFAULT']['project']),
+        exp_name=Path(config['DEFAULT']['name']),
+        dat_path=Path(config['DEFAULT']['source'])
+    )
+
+    move_processed_dat(
+        Path(config['DEFAULT']['source'])
+    )
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        timer_sec = int(config['DEFAULT']['timer_sec'])
+        iter_count = int(config['DEFAULT']['iter_count'])
+    except ValueError as err:
+        sys.exit(str(err))
+
+    s = sched.scheduler()
+    for i in range(iter_count):
+        s.enter(timer_sec, 0, main)
+        s.run()
