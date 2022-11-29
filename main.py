@@ -3,6 +3,7 @@ from pathlib import Path
 import sched
 import os
 import sys
+import shutil
 
 from loguru import logger
 
@@ -62,6 +63,9 @@ def main() -> None:
 
     move_processed_dat(
         Path(config['DEFAULT']['source'])
+    )
+    shutil.rmtree(
+        Path(config['DEFAULT']['source']) / "images"
     )
 
 
