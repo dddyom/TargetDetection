@@ -11,8 +11,9 @@ from utils import mkdir_images_from_dat_path, \
     create_summary, move_processed_dat
 
 config = ConfigParser()
-config.read('config.ini')
+# config.read('config.ini')
 
+config.read('../config.ini.bak')
 
 def get_args() -> list[str]:
     args = []

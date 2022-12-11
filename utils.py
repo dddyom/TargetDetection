@@ -40,7 +40,7 @@ def create_summary(project_path, exp_name, dat_path):
         exp_name=exp_name
     ),
         save_path=dat_path)
-    summaries.save_txt()
+    # summaries.save_txt()
     # summaries.save_json()
     summaries.remove_exp()
 
