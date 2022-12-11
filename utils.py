@@ -3,21 +3,20 @@ from pathlib import Path
 import os
 import re
 from loguru import logger
-import shutil
 
 from Buffer import Buffer
 from Labels import Labels
 
 
-def mkdir_images_from_dat_path(dat_path: Path) -> Exception | None:
+def mkdir_images_from_dat_path(dat_path: Path) -> str | None:
     """
     creating directory with jpg files by path with dat files
     """
     logger.info('Convert dat to images...')
     try:
         buffers = list(dat_path.iterdir())
-    except FileNotFoundError as e:
-        return e
+    except FileNotFoundError as err:
+        return str(err)
 
     image_path = dat_path / 'images'
     if not os.path.exists(image_path):
@@ -46,12 +45,12 @@ def create_summary(project_path, exp_name, dat_path):
     summaries.remove_exp()
 
 
-def move_processed_dat(dat_path: Path) -> FileNotFoundError | None:
+def move_processed_dat(dat_path: Path) -> str | None:
     logger.info('Move processed dat...')
     try:
         buffers = list(dat_path.iterdir())
-    except FileNotFoundError as e:
-        return e
+    except FileNotFoundError as err:
+        return str(err)
 
     processed_path = Path.joinpath(dat_path, "processed")
     if not os.path.exists(processed_path):
