@@ -1,83 +1,51 @@
-from configparser import ConfigParser
-from pathlib import Path
-import sched
 import os
-import sys
-import shutil
+import re
+import time
+from pathlib import Path
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from loguru import logger
 
-from utils import mkdir_images_from_dat_path, \
-    create_summary, move_processed_dat
+from ArgsParser import ArgsParser
+from Summary import Summary
+from utils import handle_resolved_dirs
 
-config = ConfigParser()
-# config.read('config.ini')
+# CONFIG_PATH = '../config.ini.bak'
+CONFIG_PATH = 'config.ini'
 
-config.read('../config.ini.bak')
+class FileCreateHandler(FileSystemEventHandler):
+    def on_created(self, event):
+        if not re.search("^SO.*dat$", Path(event.src_path).name):
+            return
+        logger.info('parse config')
+        args_parser = ArgsParser(CONFIG_PATH)
+        logger.info('start detection')
+        os.system('python yolov5/detect.py ' + ' '.join(args_parser.get_args()))
 
-def get_args() -> list[str]:
-    args = []
+        logger.info('write summary')
+        Summary(
+            project_path=Path(args_parser.by_key('project')),
+            source_path=Path(args_parser.by_key('source')),
+            exp_name=args_parser.by_key('name'),
+        ).write_custom_summaries()
 
-    for key in config['DEFAULT']:
-
-        if key == 'source':
-            source_dat = Path(config['DEFAULT'][key])
-            err = mkdir_images_from_dat_path(source_dat)
-            if err:
-                sys.exit(str(err))
-            args.append("--{key} {image_path}".format(
-                key=key,
-                image_path=str(source_dat / 'images'),
-            ))
-            continue
-
-        if key in ('save-txt', 'save-conf',
-                   'save-crop', 'hide-labels', 'hide-conf'):
-            if config['DEFAULT'].getboolean(key):
-                args.append('--{key}'.format(
-                    key=key,
-                ))
-            continue
-
-        if key in ('timer_sec', 'iter_count'):
-            continue
-
-        args.append("--{key} {value}".format(
-            key=key,
-            value=config['DEFAULT'][key],
-        ))
-    logger.info('config parsed')
-    return args
-
-
-def main() -> None:
-    print('MAIN')
-    args = get_args()
-    logger.info('start detection')
-    os.system('python yolov5/detect.py ' + ' '.join(args))
-    logger.info('write summary')
-    create_summary(
-        project_path=Path(config['DEFAULT']['project']),
-        exp_name=Path(config['DEFAULT']['name']),
-        dat_path=Path(config['DEFAULT']['source'])
-    )
-
-    move_processed_dat(
-        Path(config['DEFAULT']['source'])
-    )
-    shutil.rmtree(
-        Path(config['DEFAULT']['source']) / "images"
-    )
+        handle_resolved_dirs(
+            source_path=Path(args_parser.by_key('source'), )
+        )
+        logger.info('finished')
 
 
 if __name__ == '__main__':
+    logger.info('run file listener')
+    event_handler = FileCreateHandler()
+    observer = Observer()
+    observer.schedule(event_handler, ArgsParser(CONFIG_PATH).by_key('source'), recursive=True)
+    observer.start()
     try:
-        timer_sec = int(config['DEFAULT']['timer_sec'])
-        iter_count = int(config['DEFAULT']['iter_count'])
-    except ValueError as err:
-        sys.exit(str(err))
-
-    s = sched.scheduler()
-    for i in range(iter_count):
-        s.enter(timer_sec, 0, main)
-        s.run()
+        while observer.is_alive():
+            observer.join(1)
+    finally:
+        observer.stop()
+        observer.join()
