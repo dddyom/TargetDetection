@@ -12,8 +12,8 @@ from ArgsParser import ArgsParser
 from Summary import Summary
 from utils import handle_resolved_dirs
 
-CONFIG_PATH = '../config.ini.bak'
-# CONFIG_PATH = 'config.ini'
+# CONFIG_PATH = '../config.ini.bak'
+CONFIG_PATH = 'config.ini'
 
 def main():
     logger.info('parse config')
