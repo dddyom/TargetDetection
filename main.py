@@ -15,6 +15,7 @@ from utils import handle_resolved_dirs
 # CONFIG_PATH = '../config.ini.bak'
 CONFIG_PATH = 'config.ini'
 
+
 def main():
     logger.info('parse config')
     args_parser = ArgsParser(CONFIG_PATH)
@@ -35,6 +36,9 @@ def main():
 
 
 class FileCreateHandler(FileSystemEventHandler):
+    def __init__(self):
+        main()
+
     def on_created(self, event):
         if not re.search("^SO.*dat$", Path(event.src_path).name):
             return
@@ -42,11 +46,9 @@ class FileCreateHandler(FileSystemEventHandler):
 
 
 if __name__ == '__main__':
-    main()
     logger.info('run file listener')
-    event_handler = FileCreateHandler()
     observer = Observer()
-    observer.schedule(event_handler, ArgsParser(CONFIG_PATH).by_key('source'), recursive=True)
+    observer.schedule(FileCreateHandler(), ArgsParser(CONFIG_PATH).by_key('source'), recursive=True)
     observer.start()
     try:
         while observer.is_alive():
