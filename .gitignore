@@ -1,5 +1,6 @@
 yolov5/
 predictions/
+.vim/
 
 .ipynb_checkpoints
 

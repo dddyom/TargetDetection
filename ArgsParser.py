@@ -1,7 +1,6 @@
 import sys
 from configparser import ConfigParser
 from pathlib import Path
-
 from utils import mkdir_images_from_dat_path
 
 
@@ -33,8 +32,8 @@ class ArgsParser:
         if err:
             sys.exit(str(err))
         self.args.append(
-            f"--source {str(source_dat / 'images')}"
-        )
+                f"--source {str(source_dat / 'images')}"
+                )
 
     def parse_as_bool_args(self, key):
         if self.config['DEFAULT'].getboolean(key):
@@ -48,4 +47,3 @@ class ArgsParser:
 
     def by_key(self, key):
         return self.config['DEFAULT'].get(key)
-

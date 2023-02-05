@@ -7,8 +7,7 @@ import re
 
 class Summary:
     def __init__(self, project_path, source_path, exp_name):
-        self.project_path = project_path  # path to default summaries (exp/labels)
-        self.save_path = source_path  # path for save_summaries
+        self.project_path = project_path  # path to default summaries (exp/labels) self.save_path = source_path  # path for save_summaries
         self.exp_name = exp_name
 
         self.exp_path = self.get_creating_exp_path()

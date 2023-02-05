@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+import time
 
 import os
 import re
@@ -63,3 +64,9 @@ def handle_resolved_dirs(source_path: Path,
             source_path=source_path
         )
 
+
+def stopwatch(func):
+    start_time = time.time()
+    func()
+    end_time = time.time()
+    return round((end_time - start_time), 2)
