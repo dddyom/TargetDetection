@@ -48,9 +48,6 @@ def create_layout_files(source_path, raw_coords_dict):
         else:
             with open(source_path / 'images' / f'{so_name}.txt', 'a') as f:
                 for coord_pair in coord_list:
-                    # print(
-                    #     f"0 {round(coord_pair['azimuth'] / 360, 6)} {round(coord_pair['distance'] /1000 / 360, 6)} {round(10 / 360, 6)} {round(5 / 360, 6)}")
-                    # print('\n')
                     f.write(
                         f"0 {round(coord_pair['azimuth'] / 360, 6)} {round(coord_pair['distance'] /1000 / 360, 6)} {round(10 / 360, 6)} {round(5 / 360, 6)}")
                     f.write('\n')

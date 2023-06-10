@@ -15,7 +15,7 @@ CMAP = LinearSegmentedColormap.from_list("",
 
 
 class Buffer:
-    def __init__(self, dat_file_path: Path):
+    def __init__(self, dat_file_path: Path, CF=0):
         """Init numpy array from path to SO dat file"""
         buffer = []
         dat_file = open(dat_file_path, "rb").read()
@@ -24,6 +24,10 @@ class Buffer:
             buffer.append(struct.unpack("<H", dat_file[i: i + 2]))
 
         self.matrix = np.reshape(np.array(buffer), (2048, 1200)).T
+        if str(CF).isdigit() and int(CF) > 0:
+            max_matrix = self.matrix.max()
+            convert = np.vectorize(lambda x: min(x * int(CF), max_matrix))
+            self.matrix = convert(self.matrix)
 
     def save_jpg(self, jpg_fname: Path) -> None:
         plt.imsave(fname=jpg_fname,

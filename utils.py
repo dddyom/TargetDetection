@@ -9,7 +9,7 @@ from loguru import logger
 from Buffer import Buffer
 
 
-def mkdir_images_from_dat_path(dat_path: Path) -> str | None:
+def mkdir_images_from_dat_path(dat_path: Path, CF=0) -> str | None:
     """
     creating directory with jpg files by path with dat files
     """
@@ -30,7 +30,7 @@ def mkdir_images_from_dat_path(dat_path: Path) -> str | None:
         if jpg_fname.exists():
             continue
 
-        Buffer(dat_file_path=dat_path / buf).save_jpg(jpg_fname=jpg_fname)
+        Buffer(dat_file_path=dat_path / buf, CF=CF).save_jpg(jpg_fname=jpg_fname)
         logger.info(f"Save {buf.stem}.jpg to {image_path}")
 
 
