@@ -2,8 +2,8 @@ import os
 import re
 from pathlib import Path
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+# from watchdog.observers import Observer
+# from watchdog.events import FileSystemEventHandler
 from loguru import logger
 
 from ArgsParser import ArgsParser
@@ -37,14 +37,14 @@ def main():
     logger.info('finished')
 
 
-class FileCreateHandler(FileSystemEventHandler):
-    def __init__(self):
-        print('Elapsed time: {}'.format(main))
-
-    def on_created(self, event):
-        if not re.search("^SO.*dat$", Path(event.src_path).name):
-            return
-        print('Elapsed time: {}'.format(main))
+# class FileCreateHandler(FileSystemEventHandler):
+#     def __init__(self):
+#         print('Elapsed time: {}'.format(main))
+#
+#     def on_created(self, event):
+#         if not re.search("^SO.*dat$", Path(event.src_path).name):
+#             return
+#         print('Elapsed time: {}'.format(main))
 
 
 if __name__ == '__main__':
